@@ -1,9 +1,6 @@
 # travio-fe-pocs
 This repositories used by our interns for internal R&amp;D, innovations and pocs purpose to be used for project travio
 
-# GitHub Version Control Guidelines
-
-These guidelines define how our team should work with GitHub to keep our workflow consistent, clean, and efficient.  
 
 ---
 
