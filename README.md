@@ -22,9 +22,3 @@ This repositories used by our interns for internal R&amp;D, innovations and pocs
 - **Hotfix branches** (`hotfix/<name>`)
   - For urgent production fixes.
   - Create from `main`.
-
-
-
-
-
-
