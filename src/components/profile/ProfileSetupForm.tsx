@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import ImageCropper from './ImageCropper';
 
 interface ProfileFormData {
@@ -32,6 +33,7 @@ const TRAVEL_STYLE_OPTIONS = [
 ];
 
 export default function ProfileSetupForm() {
+  const router = useRouter();
   const [formData, setFormData] = useState<ProfileFormData>({
     name: '',
     dateOfBirth: '',
@@ -47,7 +49,26 @@ export default function ProfileSetupForm() {
   const [showImageCropper, setShowImageCropper] = useState(false);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [showInterestSuggestions, setShowInterestSuggestions] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Load existing profile data if available
+  useEffect(() => {
+    const savedProfile = localStorage.getItem('travioProfile');
+    if (savedProfile) {
+      const profile = JSON.parse(savedProfile);
+      setFormData({
+        name: profile.name || '',
+        dateOfBirth: profile.dateOfBirth || '',
+        gender: profile.gender || '',
+        bio: profile.bio || '',
+        interests: profile.interests || [],
+        languages: profile.languages || [],
+        travelStyle: profile.travelStyle || [],
+        profilePicture: profile.profilePicture || null
+      });
+    }
+  }, []);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
@@ -71,16 +92,43 @@ export default function ProfileSetupForm() {
       newErrors.gender = 'Gender is required';
     }
 
+    if (formData.bio.length > 500) {
+      newErrors.bio = 'Bio must be less than 500 characters';
+    }
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (validateForm()) {
-      console.log('Profile data:', formData);
-      // Handle form submission
-      alert('Profile saved successfully!');
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+
+    try {
+      // Simulate API call delay
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Save to localStorage (in real app, this would be an API call)
+      const profileData = {
+        ...formData,
+        memberSince: 'January 2024',
+        tripsCompleted: 0,
+        countriesVisited: 0,
+        upcomingTrips: 0,
+        setupComplete: true
+      };
+
+      localStorage.setItem('travioProfile', JSON.stringify(profileData));
+
+      // Redirect to profile page
+      router.push('/profile');
+    } catch (error) {
+      console.error('Error saving profile:', error);
+      alert('Error saving profile. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -117,6 +165,18 @@ export default function ProfileSetupForm() {
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        alert('File size must be less than 5MB');
+        return;
+      }
+
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        alert('Please select a valid image file');
+        return;
+      }
+
       const reader = new FileReader();
       reader.onload = (e) => {
         setSelectedImage(e.target?.result as string);
@@ -143,6 +203,13 @@ export default function ProfileSetupForm() {
     ).slice(0, 6);
     
     return suggestions;
+  };
+
+  const removeProfilePicture = () => {
+    setFormData(prev => ({
+      ...prev,
+      profilePicture: null
+    }));
   };
 
   return (
@@ -182,6 +249,17 @@ export default function ProfileSetupForm() {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
                   </button>
+                  {formData.profilePicture && (
+                    <button
+                      type="button"
+                      onClick={removeProfilePicture}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    >
+                      <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                      </svg>
+                    </button>
+                  )}
                 </div>
               </div>
               <input
@@ -192,6 +270,7 @@ export default function ProfileSetupForm() {
                 className="hidden"
               />
               <p className="text-sm text-gray-500">Upload a profile picture (optional)</p>
+              <p className="text-xs text-gray-400 mt-1">Max size: 5MB • Supported: JPG, PNG, GIF</p>
             </div>
 
             {/* Personal Details */}
@@ -269,10 +348,16 @@ export default function ProfileSetupForm() {
                 rows={4}
                 value={formData.bio}
                 onChange={handleInputChange}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B]"
+                maxLength={500}
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] ${
+                  errors.bio ? 'border-red-500' : 'border-gray-300'
+                }`}
                 placeholder="Tell other travelers about yourself..."
               />
-              <p className="text-sm text-gray-500 mt-1">{formData.bio.length}/500 characters</p>
+              <div className="flex justify-between items-center mt-1">
+                <p className="text-sm text-gray-500">{formData.bio.length}/500 characters</p>
+                {errors.bio && <p className="text-red-500 text-sm">{errors.bio}</p>}
+              </div>
             </div>
 
             {/* Interests */}
@@ -284,15 +369,18 @@ export default function ProfileSetupForm() {
                 <button
                   type="button"
                   onClick={() => setShowInterestSuggestions(!showInterestSuggestions)}
-                  className="text-sm text-[#368F8B] hover:text-[#2a6f6b] font-medium"
+                  className="text-sm text-[#368F8B] hover:text-[#2a6f6b] font-medium flex items-center"
                 >
-                  AI Suggestions ✨
+                  <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
+                  </svg>
+                  AI Suggestions
                 </button>
               </div>
               
               {showInterestSuggestions && (
                 <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-gray-700 mb-2">Suggested interests for you:</p>
+                  <p className="text-sm text-gray-700 mb-2">✨ Suggested interests for you:</p>
                   <div className="flex flex-wrap gap-2">
                     {getSuggestedInterests().map((interest) => (
                       <button
@@ -324,6 +412,9 @@ export default function ProfileSetupForm() {
                   </button>
                 ))}
               </div>
+              {formData.interests.length > 0 && (
+                <p className="text-sm text-gray-500 mt-2">{formData.interests.length} interests selected</p>
+              )}
             </div>
 
             {/* Languages */}
@@ -347,6 +438,9 @@ export default function ProfileSetupForm() {
                   </button>
                 ))}
               </div>
+              {formData.languages.length > 0 && (
+                <p className="text-sm text-gray-500 mt-2">{formData.languages.length} languages selected</p>
+              )}
             </div>
 
             {/* Travel Style */}
@@ -370,15 +464,29 @@ export default function ProfileSetupForm() {
                   </button>
                 ))}
               </div>
+              {formData.travelStyle.length > 0 && (
+                <p className="text-sm text-gray-500 mt-2">{formData.travelStyle.length} travel styles selected</p>
+              )}
             </div>
 
             {/* Submit Button */}
             <div className="pt-6">
               <button
                 type="submit"
-                className="w-full bg-[#368F8B] text-white py-3 px-4 rounded-md hover:bg-[#2a6f6b] focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:ring-offset-2 transition-colors font-medium"
+                disabled={isLoading}
+                className="w-full bg-[#368F8B] text-white py-3 px-4 rounded-md hover:bg-[#2a6f6b] focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
               >
-                Save Profile
+                {isLoading ? (
+                  <>
+                    <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                      <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                    Saving Profile...
+                  </>
+                ) : (
+                  'Save Profile'
+                )}
               </button>
             </div>
           </form>
