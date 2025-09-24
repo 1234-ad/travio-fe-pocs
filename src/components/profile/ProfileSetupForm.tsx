@@ -213,12 +213,12 @@ export default function ProfileSetupForm() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 py-8">
+    <div className="min-h-screen bg-gray-50 py-4 sm:py-8">
       <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-white rounded-xl shadow-lg p-8">
-          <div className="text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Setup Your Profile</h1>
-            <p className="text-gray-600">Tell other travelers about yourself and your travel preferences</p>
+        <div className="bg-white rounded-xl shadow-lg p-4 sm:p-8">
+          <div className="text-center mb-6 sm:mb-8">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Setup Your Profile</h1>
+            <p className="text-gray-600 text-sm sm:text-base">Tell other travelers about yourself and your travel preferences</p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -226,7 +226,7 @@ export default function ProfileSetupForm() {
             <div className="text-center">
               <div className="mb-4">
                 <div className="relative inline-block">
-                  <div className="w-32 h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+                  <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
                     {formData.profilePicture ? (
                       <img 
                         src={formData.profilePicture} 
@@ -234,7 +234,7 @@ export default function ProfileSetupForm() {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <svg className="w-16 h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                      <svg className="w-12 h-12 sm:w-16 sm:h-16 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
                         <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd" />
                       </svg>
                     )}
@@ -244,7 +244,7 @@ export default function ProfileSetupForm() {
                     onClick={() => fileInputRef.current?.click()}
                     className="absolute bottom-0 right-0 bg-[#368F8B] text-white rounded-full p-2 hover:bg-[#2a6f6b] transition-colors"
                   >
-                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <svg className="w-3 h-3 sm:w-4 sm:h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
                     </svg>
@@ -275,7 +275,7 @@ export default function ProfileSetupForm() {
 
             {/* Personal Details */}
             <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-900">Personal Details</h2>
+              <h2 className="text-lg sm:text-xl font-semibold text-gray-900">Personal Details</h2>
               
               <div>
                 <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
@@ -287,7 +287,7 @@ export default function ProfileSetupForm() {
                   name="name"
                   value={formData.name}
                   onChange={handleInputChange}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] ${
+                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] text-sm sm:text-base ${
                     errors.name ? 'border-red-500' : 'border-gray-300'
                   }`}
                   placeholder="Enter your full name"
@@ -295,7 +295,7 @@ export default function ProfileSetupForm() {
                 {errors.name && <p className="text-red-500 text-sm mt-1">{errors.name}</p>}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label htmlFor="dateOfBirth" className="block text-sm font-medium text-gray-700 mb-1">
                     Date of Birth *
@@ -306,7 +306,7 @@ export default function ProfileSetupForm() {
                     name="dateOfBirth"
                     value={formData.dateOfBirth}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] ${
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] text-sm sm:text-base ${
                       errors.dateOfBirth ? 'border-red-500' : 'border-gray-300'
                     }`}
                   />
@@ -322,7 +322,7 @@ export default function ProfileSetupForm() {
                     name="gender"
                     value={formData.gender}
                     onChange={handleInputChange}
-                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] ${
+                    className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] text-sm sm:text-base ${
                       errors.gender ? 'border-red-500' : 'border-gray-300'
                     }`}
                   >
@@ -349,7 +349,7 @@ export default function ProfileSetupForm() {
                 value={formData.bio}
                 onChange={handleInputChange}
                 maxLength={500}
-                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] ${
+                className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:border-[#368F8B] text-sm sm:text-base ${
                   errors.bio ? 'border-red-500' : 'border-gray-300'
                 }`}
                 placeholder="Tell other travelers about yourself..."
@@ -362,14 +362,14 @@ export default function ProfileSetupForm() {
 
             {/* Interests */}
             <div>
-              <div className="flex items-center justify-between mb-2">
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-2 gap-2">
                 <label className="block text-sm font-medium text-gray-700">
                   Travel Interests
                 </label>
                 <button
                   type="button"
                   onClick={() => setShowInterestSuggestions(!showInterestSuggestions)}
-                  className="text-sm text-[#368F8B] hover:text-[#2a6f6b] font-medium flex items-center"
+                  className="text-sm text-[#368F8B] hover:text-[#2a6f6b] font-medium flex items-center self-start sm:self-auto"
                 >
                   <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z" />
@@ -474,7 +474,7 @@ export default function ProfileSetupForm() {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-[#368F8B] text-white py-3 px-4 rounded-md hover:bg-[#2a6f6b] focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="w-full bg-[#368F8B] text-white py-3 px-4 rounded-md hover:bg-[#2a6f6b] focus:outline-none focus:ring-2 focus:ring-[#368F8B] focus:ring-offset-2 transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center text-sm sm:text-base"
               >
                 {isLoading ? (
                   <>
@@ -487,6 +487,17 @@ export default function ProfileSetupForm() {
                 ) : (
                   'Save Profile'
                 )}
+              </button>
+            </div>
+
+            {/* Back to Profile Link */}
+            <div className="text-center pt-4">
+              <button
+                type="button"
+                onClick={() => router.push('/profile')}
+                className="text-sm text-gray-600 hover:text-gray-800 underline"
+              >
+                Back to Profile
               </button>
             </div>
           </form>
