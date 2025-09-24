@@ -1,7 +1,13 @@
+import Header from '@/components/layout/Header';
 import ProfileSetupForm from '@/components/profile/ProfileSetupForm';
 
 export default function ProfileSetupPage() {
-  return <ProfileSetupForm />;
+  return (
+    <div>
+      <Header />
+      <ProfileSetupForm />
+    </div>
+  );
 }
 
 export const metadata = {
